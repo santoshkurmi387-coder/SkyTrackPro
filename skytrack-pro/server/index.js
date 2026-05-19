@@ -72,19 +72,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ── Database & Server Start ───────────────────────────────────────────────────
+// Start server FIRST, then connect to MongoDB
+app.listen(PORT, () => {
+  logger.info(`🚀 SkyTrack Pro server running on port ${PORT}`);
+});
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/skytrack_pro')
   .then(() => {
     logger.info('✅ MongoDB connected');
     setupWebPush();
-    app.listen(PORT, () => {
-      logger.info(`🚀 SkyTrack Pro server running on port ${PORT}`);
-      initCronJobs();
-    });
+    initCronJobs();
   })
   .catch((err) => {
     logger.error('❌ MongoDB connection failed:', err);
-    process.exit(1);
+    // Don't exit — let Render at least detect the port
   });
 
 module.exports = app;
