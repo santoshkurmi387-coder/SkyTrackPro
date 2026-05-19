@@ -1,0 +1,7 @@
+{
+  "name": "skytrackpro-root",
+  "scripts": {
+    "build": "cd skytrack-pro/client && npm install && npm run build",
+    "start": "cd skytrack-pro/server && npm install && node index.js"
+  }
+}
