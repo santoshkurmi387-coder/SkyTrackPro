@@ -13,6 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Security & Middleware ──────────────────────────────────────────────────────
+app.set('trust proxy', 1);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
@@ -73,7 +74,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server FIRST, then connect to MongoDB
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   logger.info(`🚀 SkyTrack Pro server running on port ${PORT}`);
 });
 
@@ -85,7 +86,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/skytrack_
   })
   .catch((err) => {
     logger.error('❌ MongoDB connection failed:', err);
-    // Don't exit — let Render at least detect the port
   });
 
 module.exports = app;
