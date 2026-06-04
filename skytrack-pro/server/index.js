@@ -81,6 +81,29 @@ app.listen(PORT, '0.0.0.0', () => {
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/skytrack_pro')
   .then(() => {
     logger.info('✅ MongoDB connected');
+
+    .then(async () => {
+    logger.info('✅ MongoDB connected');
+    
+    // Auto-create admin user if not exists
+    try {
+      const User = require('./models/User');
+      const bcrypt = require('bcryptjs');
+      const existing = await User.findOne({ email: 'admin@skytrackpro.com' });
+      if (!existing) {
+        const hash = await bcrypt.hash('admin123', 10);
+        await User.create({
+          email: 'admin@skytrackpro.com',
+          password: hash,
+          name: 'Admin',
+          role: 'admin'
+        });
+        logger.info('✅ Admin user created');
+      }
+    } catch(e) {
+      logger.error('Seed error:', e.message);
+    }
+    
     setupWebPush();
     initCronJobs();
   })
